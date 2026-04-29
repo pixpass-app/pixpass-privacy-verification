@@ -1,0 +1,14 @@
+{
+  "name": "pixpass-privacy-verification",
+  "version": "0.1.0",
+  "private": false,
+  "scripts": {
+    "test:privacy": "playwright test tests/privacy-harness",
+    "playwright:install": "npx playwright install --with-deps"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.59.1",
+    "playwright": "^1.59.1",
+    "typescript": "^6"
+  }
+}
