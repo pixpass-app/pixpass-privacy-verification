@@ -1,9 +1,10 @@
 import { expect, test } from '@playwright/test'
 import {
+  aiEnhanceButton,
   assertNoPrivacyViolation,
   blockThirdPartyHarnessTraffic,
   locateDownloadButton,
-  uploadSyntheticSquarePng,
+  prepareMainToolDesktop,
   type RequestRecord,
 } from './privacy-harness-utils'
 
@@ -40,12 +41,10 @@ test('desktop: enhance bg-remove trigger has no photo upload payload', async ({ 
     await blockThirdPartyHarnessTraffic(page)
     await page.goto('/')
 
-    const uploaded = await uploadSyntheticSquarePng(page, { size: 256 })
-    test.skip(!uploaded, 'Uploader UI not reachable in CI environment')
+    const ready = await prepareMainToolDesktop(page, { size: 256 })
+    test.skip(!ready, 'Main tool resize panel not reachable in CI environment')
 
-    await expect(page.getByRole('button', { name: 'Enhance' })).toBeVisible({ timeout: 15_000 })
-
-    await page.getByRole('button', { name: 'Enhance' }).click()
+    await aiEnhanceButton(page).click()
 
     const removeBgBtn = page.getByRole('button', { name: 'Remove background' })
     await expect(removeBgBtn).toBeVisible({ timeout: 10_000 })
@@ -91,11 +90,9 @@ test('desktop: free download flow has no photo upload payload', async ({ page })
 
   await blockThirdPartyHarnessTraffic(page)
   await page.goto('/')
-  const uploaded = await uploadSyntheticSquarePng(page, { size: 256 })
-  test.skip(!uploaded, 'Uploader UI not reachable in CI environment')
+  const ready = await prepareMainToolDesktop(page, { size: 256 })
+  test.skip(!ready, 'Main tool resize panel not reachable in CI environment')
 
-  // Wait for free-tools panel to be ready, then trigger standard free export.
-  await expect(page.getByRole('button', { name: 'Enhance' })).toBeVisible({ timeout: 15_000 })
   requests.length = 0
   await locateDownloadButton(page).click()
   await page.waitForTimeout(800)
@@ -133,11 +130,9 @@ test('desktop: submit-ready gating flow has no photo upload payload', async ({ p
 
   await blockThirdPartyHarnessTraffic(page)
   await page.goto('/')
-  const uploaded = await uploadSyntheticSquarePng(page, { size: 256 })
-  test.skip(!uploaded, 'Uploader UI not reachable in CI environment')
+  const ready = await prepareMainToolDesktop(page, { size: 256 })
+  test.skip(!ready, 'Main tool resize panel not reachable in CI environment')
 
-  // Move into "print-ready" state so the Submit Ready CTA is enabled.
-  await expect(page.getByRole('button', { name: 'Enhance' })).toBeVisible({ timeout: 15_000 })
   await page.getByRole('button', { name: '300' }).first().click()
 
   requests.length = 0

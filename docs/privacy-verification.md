@@ -14,7 +14,7 @@ The Playwright harness validates five practical paths:
    Standard upload -> free download path does not send photo upload payloads.
 
 2. **Desktop AI enhance flow**  
-   Upload -> Enhance -> Remove background trigger does not send photo upload payloads.
+   Select preset -> upload -> resize panel -> AI Enhance -> Remove background trigger does not send photo upload payloads.
 
 3. **Desktop Submit Ready gating flow**  
    Upload -> print-ready options -> Submit Ready modal open does not send photo upload payloads.

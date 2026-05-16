@@ -54,8 +54,15 @@ export async function selectBabyAge(page: any, age: 'newborn' | 'infant' | 'todd
   await ageButton.click()
 }
 
-/** Baby Mode — open preset search and pick first result (after age is selected). */
-export async function selectBabyPreset(page: any) {
+/** Open PresetSearchBar and pick the first listed preset. */
+export async function selectPresetFromSearchBar(page: any) {
+  const acceptButtons = page.getByRole('button', {
+    name: /accept|agree|allow all|ok|got it/i,
+  })
+  if (await acceptButtons.count()) {
+    await acceptButtons.first().click().catch(() => {})
+  }
+
   const search = page.getByPlaceholder('Search by country or document type…')
   await expect(search).toBeEnabled({ timeout: 30_000 })
   await search.click()
@@ -64,38 +71,42 @@ export async function selectBabyPreset(page: any) {
   }).first()
   await expect(option).toBeVisible({ timeout: 15_000 })
   await option.click({ force: true })
+}
+
+/** Baby Mode — open preset search and pick first result (after age is selected). */
+export async function selectBabyPreset(page: any) {
+  await selectPresetFromSearchBar(page)
   await expect(page.getByText('Drop or click to begin')).toBeVisible({ timeout: 30_000 })
 }
 
+/** Main tool — pick a square-friendly preset (US passport is first in the list). */
+export async function selectHomePreset(page: any) {
+  await selectPresetFromSearchBar(page)
+  await expect(page.getByText('Drop or click to begin')).toBeVisible({ timeout: 30_000 })
+}
+
+/** @deprecated Use selectHomePreset or selectPresetFromSearchBar */
 export async function selectFirstPreset(page: any) {
-  // Best-effort: close common cookie/consent banners if present.
-  const acceptButtons = page.getByRole('button', {
-    name: /accept|agree|allow all|ok|got it/i,
-  })
-  if (await acceptButtons.count()) {
-    await acceptButtons.first().click().catch(() => {})
+  await selectHomePreset(page)
+}
+
+export function aiEnhanceButton(page: any) {
+  return page.getByRole('button', { name: /AI Enhance/i })
+}
+
+/** Preset → upload → crop (if needed) → resize panel with free tools. */
+export async function prepareMainToolDesktop(page: any, { size = 256 }: { size?: number } = {}) {
+  await selectHomePreset(page)
+  const uploaded = await uploadSyntheticSquarePng(page, { size })
+  if (!uploaded) return false
+
+  const continueBtn = page.getByRole('button', { name: 'Continue' })
+  if (await continueBtn.isVisible({ timeout: 8_000 }).catch(() => false)) {
+    await continueBtn.click()
   }
 
-  const presetControl = page
-    .locator(
-      'input[role="combobox"], input[type="search"], input[placeholder], [role="combobox"], button[aria-haspopup="listbox"]',
-    )
-    .first()
-
-  // Some deployments already land with a default preset selected.
-  // If there is no selectable control, continue with that default.
-  if (!(await presetControl.count())) return
-
-  await presetControl.click({ timeout: 8_000 }).catch(() => {})
-
-  const firstPreset = page
-    .locator(
-      'ul li > button, [role="listbox"] [role="option"], [data-radix-popper-content-wrapper] button',
-    )
-    .first()
-  if (await firstPreset.count()) {
-    await firstPreset.click({ timeout: 8_000 }).catch(() => {})
-  }
+  await expect(aiEnhanceButton(page)).toBeVisible({ timeout: 45_000 })
+  return true
 }
 
 export async function uploadSyntheticSquarePng(page: any, { size = 256 }: { size?: number } = {}): Promise<boolean> {
@@ -138,7 +149,9 @@ export async function uploadSyntheticSquarePng(page: any, { size = 256 }: { size
 
   // Otherwise try real uploader path via file chooser.
   const dropZone = page
-    .locator('[data-testid="dropzone"], [ondrop], div:has-text("click to upload"), div:has-text("Drop your photo")')
+    .locator(
+      '[data-testid="dropzone"], [ondrop], div:has-text("Drop or click to begin"), div:has-text("click to upload"), div:has-text("Drop your photo")',
+    )
     .first()
   if (await dropZone.count()) {
     const chooserPromise = page.waitForEvent('filechooser', { timeout: 5_000 }).catch(() => null)

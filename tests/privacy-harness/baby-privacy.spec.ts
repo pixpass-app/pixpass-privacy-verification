@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test'
 import {
+  aiEnhanceButton,
   assertNoPrivacyViolation,
   blockThirdPartyHarnessTraffic,
   selectBabyAge,
@@ -63,7 +64,7 @@ test('desktop: baby mode upload and bridge to main tool has no photo upload payl
     { timeout: 45_000 },
   )
 
-  await expect(page.getByRole('button', { name: /Enhance/i })).toBeVisible({ timeout: 45_000 })
+  await expect(aiEnhanceButton(page)).toBeVisible({ timeout: 45_000 })
   await page.waitForTimeout(1_000)
 
   await assertNoPrivacyViolation(requests)
