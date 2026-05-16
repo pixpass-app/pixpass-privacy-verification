@@ -39,19 +39,32 @@ export async function blockThirdPartyHarnessTraffic(page: any) {
   await page.route('https://public.profitwell.com/**', (route: any) => route.abort())
 }
 
+function presetSearchInput(page: any) {
+  return page.locator('main').getByPlaceholder('Search by country or document type…')
+}
+
 /** Baby Mode — pick age band (default: infant). */
 export async function selectBabyAge(page: any, age: 'newborn' | 'infant' | 'toddler' = 'infant') {
   const labels: Record<typeof age, RegExp> = {
-    newborn: /Newborn/i,
-    infant: /Infant/i,
-    toddler: /Toddler/i,
+    newborn: /Newborn \(0[–-]1 month\)/i,
+    infant: /Infant \(1[–-]12 months\)/i,
+    toddler: /Toddler \(1[–-]3 years\)/i,
   }
   await expect(page.getByRole('heading', { name: /Baby & infant photos/i })).toBeVisible({
     timeout: 45_000,
   })
-  const ageButton = page.locator('fieldset button').filter({ hasText: labels[age] })
+
+  const ageButton = page.getByRole('button', { name: labels[age] })
   await expect(ageButton).toBeVisible({ timeout: 45_000 })
   await ageButton.click()
+
+  // Prod can hydrate after domcontentloaded; preset search stays disabled until age state commits.
+  const search = presetSearchInput(page)
+  const enabled = await expect(search).toBeEnabled({ timeout: 8_000 }).then(() => true).catch(() => false)
+  if (!enabled) {
+    await ageButton.click()
+    await expect(search).toBeEnabled({ timeout: 45_000 })
+  }
 }
 
 /** Open PresetSearchBar and pick the first listed preset. */
@@ -63,7 +76,7 @@ export async function selectPresetFromSearchBar(page: any) {
     await acceptButtons.first().click().catch(() => {})
   }
 
-  const search = page.getByPlaceholder('Search by country or document type…')
+  const search = presetSearchInput(page)
   await expect(search).toBeEnabled({ timeout: 30_000 })
   await search.click()
   const option = page.locator('ul li button').filter({

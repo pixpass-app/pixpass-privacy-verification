@@ -39,7 +39,7 @@ test('desktop: baby mode upload and bridge to main tool has no photo upload payl
   })
 
   await blockThirdPartyHarnessTraffic(page)
-  await page.goto('/baby', { waitUntil: 'domcontentloaded' })
+  await page.goto('/baby', { waitUntil: 'load' })
 
   const onBabyPage = await page
     .getByRole('heading', { name: /Baby & infant photos/i })
