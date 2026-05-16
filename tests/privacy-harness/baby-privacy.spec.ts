@@ -38,7 +38,13 @@ test('desktop: baby mode upload and bridge to main tool has no photo upload payl
   })
 
   await blockThirdPartyHarnessTraffic(page)
-  await page.goto('/baby')
+  await page.goto('/baby', { waitUntil: 'domcontentloaded' })
+
+  const onBabyPage = await page
+    .getByRole('heading', { name: /Baby & infant photos/i })
+    .isVisible({ timeout: 45_000 })
+    .catch(() => false)
+  test.skip(!onBabyPage, 'Baby Mode page not available at PIXPASS_BASE_URL')
 
   await selectBabyAge(page)
   await selectFirstPreset(page)

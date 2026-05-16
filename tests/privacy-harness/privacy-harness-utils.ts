@@ -40,11 +40,18 @@ export async function blockThirdPartyHarnessTraffic(page: any) {
 }
 
 /** Baby Mode — pick age band (default: infant). */
-export async function selectBabyAge(
-  page: any,
-  agePattern: RegExp = /Infant \(1–12 months\)/,
-) {
-  await page.getByRole('button', { name: agePattern }).click()
+export async function selectBabyAge(page: any, age: 'newborn' | 'infant' | 'toddler' = 'infant') {
+  const labels: Record<typeof age, RegExp> = {
+    newborn: /Newborn/i,
+    infant: /Infant/i,
+    toddler: /Toddler/i,
+  }
+  await expect(page.getByRole('heading', { name: /Baby & infant photos/i })).toBeVisible({
+    timeout: 45_000,
+  })
+  const ageButton = page.locator('fieldset button').filter({ hasText: labels[age] })
+  await expect(ageButton).toBeVisible({ timeout: 45_000 })
+  await ageButton.click()
 }
 
 export async function selectFirstPreset(page: any) {
