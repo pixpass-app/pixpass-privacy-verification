@@ -3,7 +3,7 @@ import {
   assertNoPrivacyViolation,
   blockThirdPartyHarnessTraffic,
   selectBabyAge,
-  selectFirstPreset,
+  selectBabyPreset,
   uploadSyntheticSquarePng,
   type RequestRecord,
 } from './privacy-harness-utils'
@@ -47,11 +47,7 @@ test('desktop: baby mode upload and bridge to main tool has no photo upload payl
   test.skip(!onBabyPage, 'Baby Mode page not available at PIXPASS_BASE_URL')
 
   await selectBabyAge(page)
-  await selectFirstPreset(page)
-
-  await expect(page.getByRole('heading', { name: /Add your photo/i })).toBeVisible({
-    timeout: 15_000,
-  })
+  await selectBabyPreset(page)
 
   // Measure only the upload + IndexedDB bridge + navigation to the main tool.
   requests.length = 0

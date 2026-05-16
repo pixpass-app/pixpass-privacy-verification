@@ -54,6 +54,19 @@ export async function selectBabyAge(page: any, age: 'newborn' | 'infant' | 'todd
   await ageButton.click()
 }
 
+/** Baby Mode — open preset search and pick first result (after age is selected). */
+export async function selectBabyPreset(page: any) {
+  const search = page.getByPlaceholder('Search by country or document type…')
+  await expect(search).toBeEnabled({ timeout: 30_000 })
+  await search.click()
+  const option = page.locator('ul li button').filter({
+    has: page.locator('span.font-medium'),
+  }).first()
+  await expect(option).toBeVisible({ timeout: 15_000 })
+  await option.click({ force: true })
+  await expect(page.getByText('Drop or click to begin')).toBeVisible({ timeout: 30_000 })
+}
+
 export async function selectFirstPreset(page: any) {
   // Best-effort: close common cookie/consent banners if present.
   const acceptButtons = page.getByRole('button', {
