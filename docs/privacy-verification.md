@@ -8,7 +8,7 @@ This document explains how PixPass verifies the claim:
 
 Primary objective: detect whether photo data is uploaded or transferred off-device during core user flows.
 
-The Playwright harness validates four practical paths:
+The Playwright harness validates five practical paths:
 
 1. **Desktop free flow**  
    Standard upload -> free download path does not send photo upload payloads.
@@ -19,7 +19,10 @@ The Playwright harness validates four practical paths:
 3. **Desktop Submit Ready gating flow**  
    Upload -> print-ready options -> Submit Ready modal open does not send photo upload payloads.
 
-4. **Mobile guardrail flow**  
+4. **Desktop Baby Mode flow**  
+   `/baby` -> select age and document preset -> upload photo -> session bridge to the main tool (`/`) does not send photo upload payloads.
+
+5. **Mobile guardrail flow**  
    Background removal remains disabled on mobile and no photo upload payloads are sent.
 
 ## What Counts As A Privacy Violation

@@ -39,6 +39,14 @@ export async function blockThirdPartyHarnessTraffic(page: any) {
   await page.route('https://public.profitwell.com/**', (route: any) => route.abort())
 }
 
+/** Baby Mode — pick age band (default: infant). */
+export async function selectBabyAge(
+  page: any,
+  agePattern: RegExp = /Infant \(1–12 months\)/,
+) {
+  await page.getByRole('button', { name: agePattern }).click()
+}
+
 export async function selectFirstPreset(page: any) {
   // Best-effort: close common cookie/consent banners if present.
   const acceptButtons = page.getByRole('button', {

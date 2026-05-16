@@ -10,13 +10,14 @@ This repository is a **verifiable privacy subset** — not the full product. Any
 
 ## What This Tests
 
-The Playwright harness monitors network traffic during four real user flows and fails if any request matching an image upload signature is detected.
+The Playwright harness monitors network traffic during five real user flows and fails if any request matching an image upload signature is detected.
 
 | Flow | What happens |
 |---|---|
 | **Desktop — free download** | Upload photo → download resized file |
 | **Desktop — AI enhance** | Upload → Enhance → Remove background |
 | **Desktop — Submit Ready** | Upload → print-ready options → Submit Ready modal |
+| **Desktop — Baby Mode** | `/baby` → age + preset → upload → bridge to main crop tool |
 | **Mobile — background removal** | Verifies feature stays disabled; no upload sent |
 
 A request is flagged as a **privacy violation** if any `POST`, `PUT`, or `PATCH` contains:
