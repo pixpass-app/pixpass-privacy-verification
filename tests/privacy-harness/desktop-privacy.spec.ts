@@ -5,6 +5,7 @@ import {
   blockThirdPartyHarnessTraffic,
   locateDownloadButton,
   prepareMainToolDesktop,
+  SKIP_PIXPASS_UNREACHABLE,
   type RequestRecord,
 } from './privacy-harness-utils'
 
@@ -42,7 +43,7 @@ test('desktop: enhance bg-remove trigger has no photo upload payload', async ({ 
     await page.goto('/', { waitUntil: 'domcontentloaded' })
 
     const ready = await prepareMainToolDesktop(page, { size: 256 })
-    test.skip(!ready, 'Main tool resize panel not reachable in CI environment')
+    test.skip(!ready, SKIP_PIXPASS_UNREACHABLE)
 
     await aiEnhanceButton(page).click()
 
@@ -91,7 +92,7 @@ test('desktop: free download flow has no photo upload payload', async ({ page })
   await blockThirdPartyHarnessTraffic(page)
   await page.goto('/', { waitUntil: 'domcontentloaded' })
   const ready = await prepareMainToolDesktop(page, { size: 256 })
-  test.skip(!ready, 'Main tool resize panel not reachable in CI environment')
+  test.skip(!ready, SKIP_PIXPASS_UNREACHABLE)
 
   requests.length = 0
   await locateDownloadButton(page).click()
@@ -100,7 +101,7 @@ test('desktop: free download flow has no photo upload payload', async ({ page })
   await assertNoPrivacyViolation(requests)
 })
 
-test('desktop: submit-ready gating flow has no photo upload payload', async ({ page }) => {
+test('desktop: application pack gating flow has no photo upload payload', async ({ page }) => {
   test.setTimeout(90_000)
   page.setDefaultTimeout(20_000)
   page.setDefaultNavigationTimeout(30_000)
@@ -131,7 +132,7 @@ test('desktop: submit-ready gating flow has no photo upload payload', async ({ p
   await blockThirdPartyHarnessTraffic(page)
   await page.goto('/', { waitUntil: 'domcontentloaded' })
   const ready = await prepareMainToolDesktop(page, { size: 256 })
-  test.skip(!ready, 'Main tool resize panel not reachable in CI environment')
+  test.skip(!ready, SKIP_PIXPASS_UNREACHABLE)
 
   await page.getByRole('button', { name: '300' }).first().click()
 

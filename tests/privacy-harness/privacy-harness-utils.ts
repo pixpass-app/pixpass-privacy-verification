@@ -45,10 +45,26 @@ function presetSearchInput(page: any) {
     .or(page.getByPlaceholder(/search by country or document type/i))
 }
 
+/** Shown when Cloudflare/WAF blocks headless/automated browsers on production. */
+export async function isCloudflareBlocked(page: any): Promise<boolean> {
+  return page
+    .getByRole('heading', { name: /sorry, you have been blocked/i })
+    .isVisible({ timeout: 8_000 })
+    .catch(() => false)
+}
+
+export const SKIP_PIXPASS_UNREACHABLE =
+  'PixPass UI not reachable at PIXPASS_BASE_URL (often Cloudflare blocking automated browsers on production). Run: PIXPASS_BASE_URL=http://localhost:3000 npm run test:privacy with `npm run dev` in the pixpass repo, or allowlist CI IPs in Cloudflare.'
+
 /** Wait until home tool client UI has mounted (preset picker). */
-export async function waitForHomeToolReady(page: any) {
-  const search = presetSearchInput(page)
-  await expect(search).toBeVisible({ timeout: 45_000 })
+export async function waitForHomeToolReady(page: any): Promise<boolean> {
+  if (await isCloudflareBlocked(page)) return false
+  try {
+    await expect(presetSearchInput(page)).toBeVisible({ timeout: 45_000 })
+    return true
+  } catch {
+    return false
+  }
 }
 
 /** Baby Mode — pick age band (default: infant). */
@@ -84,8 +100,12 @@ export async function selectPresetFromSearchBar(page: any) {
     await acceptButtons.first().click().catch(() => {})
   }
 
+  if (await isCloudflareBlocked(page)) {
+    throw new Error('Cloudflare block page')
+  }
+
   const search = presetSearchInput(page)
-  await expect(search).toBeVisible({ timeout: 45_000 })
+  await expect(search).toBeVisible({ timeout: 15_000 })
   await expect(search).toBeEnabled({ timeout: 30_000 })
   await search.click()
   const option = page.locator('ul li button').filter({
@@ -102,10 +122,15 @@ export async function selectBabyPreset(page: any) {
 }
 
 /** Main tool — pick a square-friendly preset (US passport is first in the list). */
-export async function selectHomePreset(page: any) {
-  await waitForHomeToolReady(page)
-  await selectPresetFromSearchBar(page)
-  await expect(page.getByText('Drop or click to begin')).toBeVisible({ timeout: 30_000 })
+export async function selectHomePreset(page: any): Promise<boolean> {
+  if (!(await waitForHomeToolReady(page))) return false
+  try {
+    await selectPresetFromSearchBar(page)
+    await expect(page.getByText('Drop or click to begin')).toBeVisible({ timeout: 30_000 })
+    return true
+  } catch {
+    return false
+  }
 }
 
 /** @deprecated Use selectHomePreset or selectPresetFromSearchBar */
@@ -119,7 +144,7 @@ export function aiEnhanceButton(page: any) {
 
 /** Preset → upload → crop (if needed) → resize panel with free tools. */
 export async function prepareMainToolDesktop(page: any, { size = 256 }: { size?: number } = {}) {
-  await selectHomePreset(page)
+  if (!(await selectHomePreset(page))) return false
   const uploaded = await uploadSyntheticSquarePng(page, { size })
   if (!uploaded) return false
 

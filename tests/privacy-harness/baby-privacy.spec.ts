@@ -3,7 +3,9 @@ import {
   aiEnhanceButton,
   assertNoPrivacyViolation,
   blockThirdPartyHarnessTraffic,
+  isCloudflareBlocked,
   selectBabyAge,
+  SKIP_PIXPASS_UNREACHABLE,
   selectBabyPreset,
   uploadSyntheticSquarePng,
   type RequestRecord,
@@ -40,6 +42,10 @@ test('desktop: baby mode upload and bridge to main tool has no photo upload payl
 
   await blockThirdPartyHarnessTraffic(page)
   await page.goto('/baby', { waitUntil: 'load' })
+
+  if (await isCloudflareBlocked(page)) {
+    test.skip(true, SKIP_PIXPASS_UNREACHABLE)
+  }
 
   const onBabyPage = await page
     .getByRole('heading', { name: /Baby & infant photos/i })
