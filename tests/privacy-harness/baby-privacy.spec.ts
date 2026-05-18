@@ -3,6 +3,7 @@ import {
   aiEnhanceButton,
   assertNoPrivacyViolation,
   blockThirdPartyHarnessTraffic,
+  BABY_PAGE_HEADING,
   isCloudflareBlocked,
   selectBabyAge,
   SKIP_PIXPASS_UNREACHABLE,
@@ -48,10 +49,10 @@ test('desktop: baby mode upload and bridge to main tool has no photo upload payl
   }
 
   const onBabyPage = await page
-    .getByRole('heading', { name: /Baby & infant photos/i })
+    .getByRole('heading', { name: BABY_PAGE_HEADING })
     .isVisible({ timeout: 45_000 })
     .catch(() => false)
-  test.skip(!onBabyPage, 'Baby Mode page not available at PIXPASS_BASE_URL')
+  test.skip(!onBabyPage, 'Baby Mode page did not load at PIXPASS_BASE_URL')
 
   await selectBabyAge(page)
   await selectBabyPreset(page)

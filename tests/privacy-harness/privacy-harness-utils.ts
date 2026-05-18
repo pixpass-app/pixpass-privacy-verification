@@ -56,6 +56,8 @@ export async function isCloudflareBlocked(page: any): Promise<boolean> {
 export const SKIP_PIXPASS_UNREACHABLE =
   'PixPass UI not reachable at PIXPASS_BASE_URL (often Cloudflare blocking automated browsers on production). Run: PIXPASS_BASE_URL=http://localhost:3000 npm run test:privacy with `npm run dev` in the pixpass repo, or allowlist CI IPs in Cloudflare.'
 
+export const BABY_PAGE_HEADING = /Passport photos for babies and infants/i
+
 /** Wait until home tool client UI has mounted (preset picker). */
 export async function waitForHomeToolReady(page: any): Promise<boolean> {
   if (await isCloudflareBlocked(page)) return false
@@ -74,7 +76,7 @@ export async function selectBabyAge(page: any, age: 'newborn' | 'infant' | 'todd
     infant: /Infant \(1[–-]12 months\)/i,
     toddler: /Toddler \(1[–-]3 years\)/i,
   }
-  await expect(page.getByRole('heading', { name: /Baby & infant photos/i })).toBeVisible({
+  await expect(page.getByRole('heading', { name: BABY_PAGE_HEADING })).toBeVisible({
     timeout: 45_000,
   })
 
