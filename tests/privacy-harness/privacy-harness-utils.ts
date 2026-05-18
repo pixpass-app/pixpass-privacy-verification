@@ -40,7 +40,15 @@ export async function blockThirdPartyHarnessTraffic(page: any) {
 }
 
 function presetSearchInput(page: any) {
-  return page.locator('main').getByPlaceholder('Search by country or document type…')
+  return page
+    .locator('[data-testid="preset-search"]')
+    .or(page.getByPlaceholder(/search by country or document type/i))
+}
+
+/** Wait until home tool client UI has mounted (preset picker). */
+export async function waitForHomeToolReady(page: any) {
+  const search = presetSearchInput(page)
+  await expect(search).toBeVisible({ timeout: 45_000 })
 }
 
 /** Baby Mode — pick age band (default: infant). */
@@ -77,6 +85,7 @@ export async function selectPresetFromSearchBar(page: any) {
   }
 
   const search = presetSearchInput(page)
+  await expect(search).toBeVisible({ timeout: 45_000 })
   await expect(search).toBeEnabled({ timeout: 30_000 })
   await search.click()
   const option = page.locator('ul li button').filter({
@@ -94,6 +103,7 @@ export async function selectBabyPreset(page: any) {
 
 /** Main tool — pick a square-friendly preset (US passport is first in the list). */
 export async function selectHomePreset(page: any) {
+  await waitForHomeToolReady(page)
   await selectPresetFromSearchBar(page)
   await expect(page.getByText('Drop or click to begin')).toBeVisible({ timeout: 30_000 })
 }
@@ -180,8 +190,8 @@ export async function uploadSyntheticSquarePng(page: any, { size = 256 }: { size
 }
 
 export function locateDownloadButton(page: any) {
-  // In the free panel: "Download" button containing a span "96 DPI · JPEG"
-  return page.getByText(/96 DPI\s*·\s*JPEG/i).locator('xpath=ancestor::button[1]')
+  // Free row: "96 DPI · JPEG" label sits above the button, not inside it.
+  return page.getByRole('button', { name: /^Download$/i })
 }
 
 export async function assertNoPrivacyViolation(requests: RequestRecord[]) {
@@ -224,4 +234,3 @@ export async function assertNoPrivacyViolation(requests: RequestRecord[]) {
   expect(violations, violations.length ? violations.join('\n') : undefined).toHaveLength(0)
   console.info('[privacy-harness] no privacy violation detected')
 }
-

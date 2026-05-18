@@ -39,7 +39,7 @@ test('desktop: enhance bg-remove trigger has no photo upload payload', async ({ 
 
   return (async () => {
     await blockThirdPartyHarnessTraffic(page)
-    await page.goto('/')
+    await page.goto('/', { waitUntil: 'domcontentloaded' })
 
     const ready = await prepareMainToolDesktop(page, { size: 256 })
     test.skip(!ready, 'Main tool resize panel not reachable in CI environment')
@@ -89,7 +89,7 @@ test('desktop: free download flow has no photo upload payload', async ({ page })
   })
 
   await blockThirdPartyHarnessTraffic(page)
-  await page.goto('/')
+  await page.goto('/', { waitUntil: 'domcontentloaded' })
   const ready = await prepareMainToolDesktop(page, { size: 256 })
   test.skip(!ready, 'Main tool resize panel not reachable in CI environment')
 
@@ -129,15 +129,15 @@ test('desktop: submit-ready gating flow has no photo upload payload', async ({ p
   })
 
   await blockThirdPartyHarnessTraffic(page)
-  await page.goto('/')
+  await page.goto('/', { waitUntil: 'domcontentloaded' })
   const ready = await prepareMainToolDesktop(page, { size: 256 })
   test.skip(!ready, 'Main tool resize panel not reachable in CI environment')
 
   await page.getByRole('button', { name: '300' }).first().click()
 
   requests.length = 0
-  await page.getByRole('button', { name: 'Submit Ready' }).click()
-  await expect(page.getByRole('dialog')).toBeVisible({ timeout: 10_000 })
+  await page.getByRole('button', { name: /Application Pack/i }).click()
+  await expect(page.getByRole('dialog', { name: /Application Pack/i })).toBeVisible({ timeout: 10_000 })
   await page.waitForTimeout(800)
 
   await assertNoPrivacyViolation(requests)
