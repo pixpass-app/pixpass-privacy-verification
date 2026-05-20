@@ -221,6 +221,11 @@ export function locateDownloadButton(page: any) {
   return page.getByRole('button', { name: /^Download$/i })
 }
 
+/** Application Pack resolution toggle (300 default, 600 high tier). */
+export async function selectPackDpi(page: any, dpi: 300 | 600) {
+  await page.getByRole('button', { name: `${dpi} DPI` }).click()
+}
+
 export async function assertNoPrivacyViolation(requests: RequestRecord[]) {
   const violations: string[] = []
 

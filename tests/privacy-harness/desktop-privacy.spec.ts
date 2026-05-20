@@ -5,6 +5,7 @@ import {
   blockThirdPartyHarnessTraffic,
   locateDownloadButton,
   prepareMainToolDesktop,
+  selectPackDpi,
   SKIP_PIXPASS_UNREACHABLE,
   type RequestRecord,
 } from './privacy-harness-utils'
@@ -134,7 +135,8 @@ test('desktop: application pack gating flow has no photo upload payload', async 
   const ready = await prepareMainToolDesktop(page, { size: 256 })
   test.skip(!ready, SKIP_PIXPASS_UNREACHABLE)
 
-  await page.getByRole('button', { name: '300' }).first().click()
+  // Pack defaults to 300 DPI (print-ready); select 600 to exercise the high tier.
+  await selectPackDpi(page, 600)
 
   requests.length = 0
   await page.getByRole('button', { name: /Application Pack/i }).click()
