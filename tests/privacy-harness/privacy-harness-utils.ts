@@ -217,13 +217,24 @@ export async function uploadSyntheticSquarePng(page: any, { size = 256 }: { size
 }
 
 export function locateDownloadButton(page: any) {
-  // Free row: "96 DPI · JPEG" label sits above the button, not inside it.
-  return page.getByRole('button', { name: /^Download$/i })
+  // Prefer stable test id — decorative icons must not affect role/name matching.
+  return page.getByTestId('free-download').or(
+    page
+      .locator('div')
+      .filter({ has: page.getByText(/96 DPI · JPEG/i) })
+      .getByRole('button', { name: /^Download$/i }),
+  )
 }
 
-/** Application Pack resolution toggle (300 default, 600 high tier). */
-export async function selectPackDpi(page: any, dpi: 300 | 600) {
-  await page.getByRole('button', { name: `${dpi} DPI` }).click()
+export function locateApplicationPackButton(page: any) {
+  return page.getByTestId('application-pack-cta').or(
+    page.getByRole('button', { name: /Application Pack/i }),
+  )
+}
+
+/** Pack resolution toggle (96 default; 300 enables print-ready / Application Pack). */
+export async function selectPackDpi(page: any, dpi: 96 | 300) {
+  await page.getByRole('button', { name: String(dpi), exact: true }).first().click()
 }
 
 export async function assertNoPrivacyViolation(requests: RequestRecord[]) {

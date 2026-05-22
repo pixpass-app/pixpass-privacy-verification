@@ -3,6 +3,7 @@ import {
   aiEnhanceButton,
   assertNoPrivacyViolation,
   blockThirdPartyHarnessTraffic,
+  locateApplicationPackButton,
   locateDownloadButton,
   prepareMainToolDesktop,
   selectPackDpi,
@@ -135,11 +136,11 @@ test('desktop: application pack gating flow has no photo upload payload', async 
   const ready = await prepareMainToolDesktop(page, { size: 256 })
   test.skip(!ready, SKIP_PIXPASS_UNREACHABLE)
 
-  // Pack defaults to 300 DPI (print-ready); select 600 to exercise the high tier.
-  await selectPackDpi(page, 600)
+  // Pack defaults to 96 DPI; 300 enables print-ready and the Application Pack CTA.
+  await selectPackDpi(page, 300)
 
   requests.length = 0
-  await page.getByRole('button', { name: /Application Pack/i }).click()
+  await locateApplicationPackButton(page).click()
   await expect(page.getByRole('dialog', { name: /Application Pack/i })).toBeVisible({ timeout: 10_000 })
   await page.waitForTimeout(800)
 
