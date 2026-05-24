@@ -1,6 +1,8 @@
 import { defineConfig } from '@playwright/test'
 
-const baseURL = process.env.PIXPASS_BASE_URL ?? 'https://pixpass.app'
+import { PIXPASS_BASE_URL } from './tests/privacy-harness/env'
+
+const baseURL = PIXPASS_BASE_URL
 
 export default defineConfig({
   testDir: './tests/privacy-harness',

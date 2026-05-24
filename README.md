@@ -16,7 +16,7 @@ The Playwright harness monitors network traffic during five real user flows and 
 |---|---|
 | **Desktop — free download** | Upload photo → download resized file |
 | **Desktop — AI enhance** | Upload → AI Enhance → Remove background |
-| **Desktop — Application Pack** | Upload → print-ready options (e.g. 300 DPI) → Application Pack modal |
+| **Desktop — Application Pack** | Upload → select 300 DPI (print-ready) → Application Pack modal |
 | **Desktop — Baby Mode** | `/baby` → age + preset → upload → bridge to main crop tool |
 | **Mobile — background removal** | Verifies feature stays disabled; no upload sent |
 

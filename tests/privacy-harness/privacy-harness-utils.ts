@@ -2,9 +2,9 @@ import { expect } from '@playwright/test'
 import fs from 'node:fs'
 import path from 'node:path'
 
-const baseURL = process.env.PIXPASS_BASE_URL ?? 'http://localhost:3000'
-const baseHost = new URL(baseURL).hostname
-const selfHosts = new Set([baseHost, 'localhost', '127.0.0.1'])
+import { pixpassSelfHosts } from './env'
+
+const selfHosts = pixpassSelfHosts()
 
 export function isAllowedExternalHost(hostname: string): boolean {
   // Mirrors your CSP allowlist intentions:
