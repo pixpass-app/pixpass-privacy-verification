@@ -16,8 +16,8 @@ The Playwright harness validates five practical paths:
 2. **Desktop AI enhance flow**  
    Select preset → upload → review panel → **AI Enhance** → **Remove background** trigger does not send photo upload payloads.
 
-3. **Desktop Application Pack gating flow**  
-   Upload → enable a print-ready option (e.g. **300** DPI) → **Application Pack** modal open does not send photo upload payloads.
+3. **Desktop PixPass Pro gating flow**  
+   Upload → select print layout (e.g. **A4**) → **PixPass Pro** modal open does not send photo upload payloads. Harness uses `data-testid` selectors (`free-download`, `pixpass-pro-cta`, `pixpass-pro-export`).
 
 4. **Desktop Baby Mode flow**  
    `/baby` → select age and document preset → upload photo → session bridge to the main tool (`/`) does not send photo upload payloads.

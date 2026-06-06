@@ -218,23 +218,30 @@ export async function uploadSyntheticSquarePng(page: any, { size = 256 }: { size
 
 export function locateDownloadButton(page: any) {
   // Prefer stable test id — decorative icons must not affect role/name matching.
+  // Free export is now a secondary "Download free" link below the primary CTA.
   return page.getByTestId('free-download').or(
-    page
-      .locator('div')
-      .filter({ has: page.getByText(/96 DPI · JPEG/i) })
-      .getByRole('button', { name: /^Download$/i }),
+    page.getByRole('button', { name: /Download free/i }),
   )
 }
 
-export function locateApplicationPackButton(page: any) {
-  return page.getByTestId('application-pack-cta').or(
-    page.getByRole('button', { name: /Application Pack/i }),
+export function locatePixPassProButton(page: any) {
+  // Primary paid CTA: "Download <spec> · $4.99". Test id is source of truth.
+  return page.getByTestId('pixpass-pro-cta').or(
+    page.getByRole('button', { name: /\$4\.99/i }),
   )
 }
 
-/** Pack resolution toggle (96 default; 300 enables print-ready / Application Pack). */
+/** Pack resolution toggle (300 default). DPI alone never unlocks the CTA — compliance does. */
 export async function selectPackDpi(page: any, dpi: 96 | 300) {
   await page.getByRole('button', { name: String(dpi), exact: true }).first().click()
+}
+
+/**
+ * Print-sheet toggle. A non-"Off" sheet is an explicit premium pick, so it
+ * unlocks the primary CTA into the PixPass Pro checkout flow without compliance.
+ */
+export async function selectPrintLayout(page: any, label: 'Off' | 'A4' | '4×6' | '5×7') {
+  await page.getByRole('button', { name: label, exact: true }).first().click()
 }
 
 export async function assertNoPrivacyViolation(requests: RequestRecord[]) {

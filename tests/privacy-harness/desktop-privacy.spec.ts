@@ -3,10 +3,10 @@ import {
   aiEnhanceButton,
   assertNoPrivacyViolation,
   blockThirdPartyHarnessTraffic,
-  locateApplicationPackButton,
+  locatePixPassProButton,
   locateDownloadButton,
   prepareMainToolDesktop,
-  selectPackDpi,
+  selectPrintLayout,
   SKIP_PIXPASS_UNREACHABLE,
   type RequestRecord,
 } from './privacy-harness-utils'
@@ -103,7 +103,7 @@ test('desktop: free download flow has no photo upload payload', async ({ page })
   await assertNoPrivacyViolation(requests)
 })
 
-test('desktop: application pack gating flow has no photo upload payload', async ({ page }) => {
+test('desktop: pixpass-pro gating flow has no photo upload payload', async ({ page }) => {
   test.setTimeout(90_000)
   page.setDefaultTimeout(20_000)
   page.setDefaultNavigationTimeout(30_000)
@@ -136,12 +136,14 @@ test('desktop: application pack gating flow has no photo upload payload', async 
   const ready = await prepareMainToolDesktop(page, { size: 256 })
   test.skip(!ready, SKIP_PIXPASS_UNREACHABLE)
 
-  // Pack defaults to 96 DPI; 300 enables print-ready and the Application Pack CTA.
-  await selectPackDpi(page, 300)
+  // DPI alone never unlocks the CTA (compliance does). Picking a print sheet is an
+  // explicit premium choice, so it turns the primary Download CTA into the
+  // PixPass Pro checkout flow when not yet unlocked.
+  await selectPrintLayout(page, 'A4')
 
   requests.length = 0
-  await locateApplicationPackButton(page).click()
-  await expect(page.getByRole('dialog', { name: /Application Pack/i })).toBeVisible({ timeout: 10_000 })
+  await locatePixPassProButton(page).click()
+  await expect(page.getByRole('dialog', { name: /PixPass Pro/i })).toBeVisible({ timeout: 10_000 })
   await page.waitForTimeout(800)
 
   await assertNoPrivacyViolation(requests)
