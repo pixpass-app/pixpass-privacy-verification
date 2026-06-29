@@ -7,13 +7,9 @@ import { pixpassSelfHosts } from './env'
 const selfHosts = pixpassSelfHosts()
 
 export function isAllowedExternalHost(hostname: string): boolean {
-  // Mirrors your CSP allowlist intentions:
-  // - Plausible: https://plausible.io
-  // - Paddle: https://*.paddle.com (and checkout iframe)
-  // - ProfitWell: https://public.profitwell.com
+  // Production CSP allowlist: Plausible + Paddle only.
   return (
     hostname === 'plausible.io' ||
-    hostname === 'public.profitwell.com' ||
     hostname.endsWith('.paddle.com')
   )
 }
@@ -36,7 +32,6 @@ export async function blockThirdPartyHarnessTraffic(page: any) {
   // This keeps privacy tests deterministic and prevents noise in dashboards.
   await page.route('https://plausible.io/**', (route: any) => route.abort())
   await page.route('https://*.paddle.com/**', (route: any) => route.abort())
-  await page.route('https://public.profitwell.com/**', (route: any) => route.abort())
 }
 
 function presetSearchInput(page: any) {

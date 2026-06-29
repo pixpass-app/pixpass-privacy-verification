@@ -44,7 +44,6 @@ To avoid synthetic analytics/payment noise, the harness aborts requests to:
 
 - `plausible.io`
 - `*.paddle.com`
-- `public.profitwell.com`
 
 This is intentional for test isolation and does not change production behavior.
 
