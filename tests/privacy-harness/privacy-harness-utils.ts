@@ -7,9 +7,10 @@ import { pixpassSelfHosts } from './env'
 const selfHosts = pixpassSelfHosts()
 
 export function isAllowedExternalHost(hostname: string): boolean {
-  // Production CSP allowlist: Plausible + Paddle only.
+  // External hosts the live app may still contact. Analytics ingest is
+  // first-party (/js/pa.js, /api/pa/event); stats.pixpass.app is the CE origin.
   return (
-    hostname === 'plausible.io' ||
+    hostname === 'stats.pixpass.app' ||
     hostname.endsWith('.paddle.com')
   )
 }
@@ -30,6 +31,9 @@ export function classifyContentType(headers: Record<string, string>): string {
 export async function blockThirdPartyHarnessTraffic(page: any) {
   // Avoid generating synthetic analytics/payment traffic during harness runs.
   // This keeps privacy tests deterministic and prevents noise in dashboards.
+  await page.route('**/js/pa.js', (route: any) => route.abort())
+  await page.route('**/api/pa/event', (route: any) => route.abort())
+  await page.route('https://stats.pixpass.app/**', (route: any) => route.abort())
   await page.route('https://plausible.io/**', (route: any) => route.abort())
   await page.route('https://*.paddle.com/**', (route: any) => route.abort())
 }
@@ -67,9 +71,9 @@ export async function waitForHomeToolReady(page: any): Promise<boolean> {
 /** Baby Mode — pick age band (default: infant). */
 export async function selectBabyAge(page: any, age: 'newborn' | 'infant' | 'toddler' = 'infant') {
   const labels: Record<typeof age, RegExp> = {
-    newborn: /Newborn \(0[–-]1 month\)/i,
-    infant: /Infant \(1[–-]12 months\)/i,
-    toddler: /Toddler \(1[–-]3 years\)/i,
+    newborn: /Newborn \(0[--]1 month\)/i,
+    infant: /Infant \(1[--]12 months\)/i,
+    toddler: /Toddler \(1[--]3 years\)/i,
   }
   await expect(page.getByRole('heading', { name: BABY_PAGE_HEADING })).toBeVisible({
     timeout: 45_000,

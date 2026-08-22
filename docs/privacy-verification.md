@@ -42,7 +42,9 @@ If none are detected, tests print:
 
 To avoid synthetic analytics/payment noise, the harness aborts requests to:
 
-- `plausible.io`
+- `/js/pa.js` and `/api/pa/event` (self-hosted Plausible first-party ingest)
+- `stats.pixpass.app`
+- `plausible.io` (blocked if a Cloud snippet reappears)
 - `*.paddle.com`
 
 This is intentional for test isolation and does not change production behavior.

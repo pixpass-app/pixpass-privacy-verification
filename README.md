@@ -65,7 +65,7 @@ Many sites block headless browsers at the edge. If the app does not load, deskto
 
 We do **not** document or ship any WAF bypass in this public repo. Operational exceptions (if any) belong in private operator runbooks only.
 
-The harness intercepts and aborts requests to `plausible.io` and `*.paddle.com` during tests. This is intentional test isolation — those services are not relevant to the privacy claim and would add noise to results.
+The harness intercepts and aborts requests to `/js/pa.js`, `/api/pa/event`, `stats.pixpass.app`, `plausible.io`, and `*.paddle.com` during tests. This is intentional test isolation: those calls are not relevant to the photo-upload claim and would add noise to results.
 
 ---
 
