@@ -143,7 +143,8 @@ test('desktop: pixpass-pro gating flow has no photo upload payload', async ({ pa
 
   requests.length = 0
   await locatePixPassProButton(page).click()
-  await expect(page.getByRole('dialog', { name: /PixPass Pro/i })).toBeVisible({ timeout: 10_000 })
+  await expect(page.getByRole('dialog', { name: /PixPass Pro/i })).toHaveCount(0)
+  await expect(locatePixPassProButton(page)).toBeVisible()
   await page.waitForTimeout(800)
 
   await assertNoPrivacyViolation(requests)

@@ -224,10 +224,8 @@ export function locateDownloadButton(page: any) {
 }
 
 export function locatePixPassProButton(page: any) {
-  // Primary paid CTA: "Download <spec> · $4.99". Test id is source of truth.
-  return page.getByTestId('pixpass-pro-cta').or(
-    page.getByRole('button', { name: /\$4\.99/i }),
-  )
+  // Primary paid CTA: "Download <spec>". Price lives on the Single/Session pills.
+  return page.getByTestId('pixpass-pro-cta')
 }
 
 /** Pack resolution toggle (300 default). DPI alone never unlocks the CTA — compliance does. */

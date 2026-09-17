@@ -16,7 +16,7 @@ The Playwright harness monitors network traffic during five real user flows and 
 |---|---|
 | **Desktop — free download** | Upload photo → download resized file |
 | **Desktop — AI enhance** | Upload → AI Enhance → Remove background |
-| **Desktop — PixPass Pro** | Upload → select print layout (A4) → PixPass Pro modal |
+| **Desktop — PixPass Pro** | Upload → select print layout (A4) → PixPass Pro Download CTA (no local checkout dialog) |
 | **Desktop — Baby Mode** | `/baby` → age + preset → upload → bridge to main crop tool |
 | **Mobile — background removal** | Verifies feature stays disabled; no upload sent |
 
