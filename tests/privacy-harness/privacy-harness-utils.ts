@@ -68,7 +68,7 @@ export async function waitForHomeToolReady(page: any): Promise<boolean> {
   }
 }
 
-/** Baby Mode — pick age band (default: infant). */
+/** Baby Mode: pick age band (default: infant). */
 export async function selectBabyAge(page: any, age: 'newborn' | 'infant' | 'toddler' = 'infant') {
   const labels: Record<typeof age, RegExp> = {
     newborn: /Newborn \(0[--]1 month\)/i,
@@ -116,13 +116,13 @@ export async function selectPresetFromSearchBar(page: any) {
   await option.click({ force: true })
 }
 
-/** Baby Mode — open preset search and pick first result (after age is selected). */
+/** Baby Mode: open preset search and pick first result (after age is selected). */
 export async function selectBabyPreset(page: any) {
   await selectPresetFromSearchBar(page)
   await expect(page.getByText('Drop or click to begin')).toBeVisible({ timeout: 30_000 })
 }
 
-/** Main tool — pick a square-friendly preset (US passport is first in the list). */
+/** Main tool: pick a square-friendly preset (US passport is first in the list). */
 export async function selectHomePreset(page: any): Promise<boolean> {
   if (!(await waitForHomeToolReady(page))) return false
   try {
@@ -216,7 +216,7 @@ export async function uploadSyntheticSquarePng(page: any, { size = 256 }: { size
 }
 
 export function locateDownloadButton(page: any) {
-  // Prefer stable test id — decorative icons must not affect role/name matching.
+  // Prefer stable test id. Decorative icons must not affect role/name matching.
   // Free export is now a secondary "Download free" link below the primary CTA.
   return page.getByTestId('free-download').or(
     page.getByRole('button', { name: /Download free/i }),
@@ -228,7 +228,7 @@ export function locatePixPassProButton(page: any) {
   return page.getByTestId('pixpass-pro-cta')
 }
 
-/** Pack resolution toggle (300 default). DPI alone never unlocks the CTA — compliance does. */
+/** Pack resolution toggle (300 default). DPI alone never unlocks the CTA. Compliance does. */
 export async function selectPackDpi(page: any, dpi: 96 | 300) {
   await page.getByRole('button', { name: String(dpi), exact: true }).first().click()
 }

@@ -57,7 +57,7 @@ From this repository root:
 npm install
 npm run playwright:install
 
-# Reliable — main PixPass app on :3000
+# Reliable: main PixPass app on :3000
 PIXPASS_BASE_URL=http://localhost:3000 npm run test:privacy
 ```
 
@@ -67,7 +67,7 @@ PIXPASS_BASE_URL=http://localhost:3000 npm run test:privacy
 PIXPASS_BASE_URL=https://pixpass.app npm run test:privacy
 ```
 
-Edge WAFs often block automated browsers before the app loads. Tests then **skip** with a clear message — not a privacy failure. The **authoritative** automated run is against a local PixPass instance (`PIXPASS_BASE_URL=http://localhost:3000`).
+Edge WAFs often block automated browsers before the app loads. Tests then **skip** with a clear message, not a privacy failure. The **authoritative** automated run is against a local PixPass instance (`PIXPASS_BASE_URL=http://localhost:3000`).
 
 ## CI Setup
 
